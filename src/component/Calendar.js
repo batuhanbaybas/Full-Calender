@@ -7,13 +7,8 @@ import bootstrapPlugin from "@fullcalendar/bootstrap";
 import listPlugin from "@fullcalendar/list";
 let id = 1;
 
-
 export default class Calendar extends Component {
-    state = {
-        currentEvent: []
-    }
   render() {
-     
     return (
       <div>
         <FullCalendar
@@ -32,7 +27,6 @@ export default class Calendar extends Component {
           selectable={true}
           select={this.HandleDateSelect}
           eventClick={this.eventClickHandler}
-          eventsSet ={this.eventSetHandler}
           themeSystem="bootstrap"
           initialView="timeGridWeek"
           dayMaxEvents={true}
@@ -56,13 +50,7 @@ export default class Calendar extends Component {
       id++;
     }
   };
- 
-eventSetHandler = (events) =>{
-    this.setState({
-        currentEvent:events
-    })
-  
-}
+
   eventClickHandler = (removeEvent) => {
     let event = removeEvent.event;
     event.remove();
