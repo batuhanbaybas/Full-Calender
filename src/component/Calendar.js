@@ -1,58 +1,108 @@
 import React, { Component } from "react";
-import FullCalendar from "@fullcalendar/react";
+import FullCalender from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import interectionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
 import bootstrapPlugin from "@fullcalendar/bootstrap";
-import listPlugin from "@fullcalendar/list";
-let id = 1;
+import Swal from "sweetalert2";
+import "../App.css";
 
-export default class Calendar extends Component {
+class Calendar extends Component {
+  state = {
+    currenEvent: [],
+  };
   render() {
     return (
-      <div>
-        <FullCalendar
+      <div className="demo-app-main">
+        <FullCalender
+          locale="tr"
           plugins={[
             dayGridPlugin,
+            interectionPlugin,
             timeGridPlugin,
-            listPlugin,
-            interactionPlugin,
             bootstrapPlugin,
           ]}
           headerToolbar={{
-            left: "prev next today",
+            left: "prev today next",
             center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
+            right: "dayGridMonth timeGridWeek",
           }}
-          selectable={true}
-          select={this.HandleDateSelect}
-          eventClick={this.eventClickHandler}
+          buttonText={{
+            month: "Ay",
+            week: "Hafta",
+            today: "Bugün",
+          }}
           themeSystem="bootstrap"
-          initialView="timeGridWeek"
-          dayMaxEvents={true}
+          initialView="dayGridMonth"
+          select={this.handleDateClick}
+          eventClick={this.handleEventClick}
+          eventsSet={this.eventHandle}
+          initialEvents={this.state.currenEvent}
           editable={true}
+          selectable={true}
+          selectMirror={true}
+          dayMaxEvents={true}
         />
       </div>
     );
   }
-  HandleDateSelect = (eventAdd) => {
-    let title = prompt("Lütfen Bir Başlık Giriniz");
-    let calender = eventAdd.view.calendar;
+  handleDateClick = async (arg) => {
+    let calendarApi = arg.view.calendar;
 
-    if (title) {
-      calender.addEvent({
-        id: id,
-        title: title,
-        start: eventAdd.startStr,
-        end: eventAdd.endStr,
-        allDay: eventAdd.allDay,
+    await Swal.fire({
+      title: "Bir Görev Giriniz",
+      input: "text",
+      showCancelButton: true,
+      confirmButtonText: "Kayıt",
+      cancelButtonText: "İptal",
+    }).then((res) => {
+      if (res.value) {
+        calendarApi.addEvent({
+          id: new Date().getTime(),
+          title: res.value,
+          start: arg.startStr,
+          end: arg.endStr,
+          allDay: arg.allDay,
+        });
+      }
+    });
+    
+  };
+  handleEventClick = async (arg) => {
+    let removedEvent = arg.event.title;
+    if (removedEvent) {
+      await Swal.fire({
+        icon: "question",
+        title: removedEvent,
+        text: "Silinecek Emin misin?",
+        showDenyButton: true,
+        confirmButtonText:"Düzenle" ,
+        denyButtonText:"Sil"
+      }).then((res) => {
+        if (res.isDenied) {
+          arg.event.remove();
+        // }else if(res.isConfirmed){
+        //  this.state.currenEvent.map(e=>e.id===arg.event.id)
+        //  Swal.fire({
+        //   title: "Yeni Görevi Giriniz",
+        //   input: "text",
+        //   confirmButtonText: "Kayıt",
+          
+        // }).then(res=>{
+        //   if (res.value) {
+        //     arg.event.id = (new Date()).getTime()
+        //     arg.event.title = res.value
+        //   }
+        // })
+        }
       });
-      id++;
     }
   };
-
-  eventClickHandler = (removeEvent) => {
-    let event = removeEvent.event;
-    event.remove();
+  eventHandle = (event) => {
+    this.setState({
+      currenEvent: event,
+    });
   };
 }
+
+export default Calendar;

@@ -1,16 +1,15 @@
-import Calendar from "./component/Calendar";
-import SideBar from "./component/sideBar";
-import "./App.css";
+import React, { Component } from 'react'
+import Calendar from './component/Calendar'
 
-function App() {
-  return (
-    <div className="demo-app">
-      <SideBar />
-      <div className="demo-app-main">
-        <Calendar />
+export default class App extends Component {
+  state = {
+    seen: false
+  };
+  render() {
+    return (
+      <div className="demo-app">
+        <Calendar/>
       </div>
-    </div>
-  );
+    )
+  }
 }
-
-export default App;
