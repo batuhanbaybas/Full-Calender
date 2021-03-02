@@ -25,23 +25,27 @@ class Calendar extends Component {
           headerToolbar={{
             left: "prev today next",
             center: "title",
-            right: "dayGridMonth timeGridWeek",
+            right: "dayGridMonth timeGridWeek timeGridDay",
           }}
           buttonText={{
             month: "Ay",
             week: "Hafta",
             today: "Bugün",
+            day: "Gün"
           }}
           themeSystem="bootstrap"
           initialView="dayGridMonth"
           select={this.handleDateClick}
           eventClick={this.handleEventClick}
           eventsSet={this.eventHandle}
+          eventContent={this.renderEvent}
           initialEvents={this.state.currenEvent}
           editable={true}
           selectable={true}
           selectMirror={true}
           dayMaxEvents={true}
+          navLinks={true}
+          
         />
       </div>
     );
@@ -81,19 +85,19 @@ class Calendar extends Component {
       }).then((res) => {
         if (res.isDenied) {
           arg.event.remove();
-        // }else if(res.isConfirmed){
-        //  this.state.currenEvent.map(e=>e.id===arg.event.id)
-        //  Swal.fire({
-        //   title: "Yeni Görevi Giriniz",
-        //   input: "text",
-        //   confirmButtonText: "Kayıt",
+        
+        }else if(res.isConfirmed){
+        this.state.currenEvent.map(e=>e.id===arg.event.id)
+        Swal.fire({
+          title: "Yeni Görev Giriniz",
+          input:"text",
+          confirmButtonText: "Onayla"
+        }).then(res =>{
+          if (res.value) {
+            
+          }
+        }) 
           
-        // }).then(res=>{
-        //   if (res.value) {
-        //     arg.event.id = (new Date()).getTime()
-        //     arg.event.title = res.value
-        //   }
-        // })
         }
       });
     }
@@ -103,6 +107,14 @@ class Calendar extends Component {
       currenEvent: event,
     });
   };
+  renderEvent = (arg) =>{
+    return(
+      <>
+      <b>{arg.timeText}</b>
+      <i className="ml-2">{arg.event.title}</i>
+      </>
+    )
+  }
 }
 
 export default Calendar;
